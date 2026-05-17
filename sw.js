@@ -5,6 +5,7 @@ const ASSETS = [
   './manifest.json',
   './icons/icon-192.png',
   './icons/icon-512.png',
+  './Cronometro.jpeg',
 ];
 
 self.addEventListener('install', e => {

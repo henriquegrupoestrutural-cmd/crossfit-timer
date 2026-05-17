@@ -205,6 +205,15 @@
       height: min(72vw, 56vh, 380px);
     }
 
+    #watermark {
+      position: absolute;
+      inset: 10%;
+      border-radius: 50%;
+      background: url('Cronometro.jpeg') center top / cover no-repeat;
+      opacity: 0.10;
+      pointer-events: none;
+    }
+
     #progress-ring {
       position: absolute;
       inset: 0;
@@ -419,6 +428,7 @@
 
 <main id="timer-display">
   <div id="ring-wrapper">
+    <div id="watermark"></div>
     <svg id="progress-ring" viewBox="0 0 200 200" aria-hidden="true">
       <circle class="ring-track" cx="100" cy="100" r="86"/>
       <circle class="ring-fill" id="ring-fill" cx="100" cy="100" r="86"/>
