@@ -720,7 +720,7 @@
       phaseEl.textContent     = 'REPETIÇÕES';
       timeEl.textContent      = String(repCount);
       roundEl.textContent     = repCount === 1 ? '1 rep' : `${repCount} reps`;
-      progressBar.style.width = '0%';
+      updateRing(0);
       return;
     }
 
