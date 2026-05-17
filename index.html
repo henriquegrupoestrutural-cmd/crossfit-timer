@@ -10,6 +10,8 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="apple-mobile-web-app-title" content="CF Timer" />
   <link rel="apple-touch-icon" href="icons/icon-192.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet">
   <style>
     :root {
       --bg: #060608;
@@ -181,52 +183,93 @@
       margin-top: 2px;
     }
 
+    /* ── PROGRESS BAR (oculta — substituída pelo anel) ── */
+    #progress-bar-wrap { display: none; }
+
     /* ── TIMER DISPLAY ── */
     #timer-display {
       flex: 1;
-      display: grid;
-      place-items: center;
-      padding: 0 16px;
-      position: relative;
       min-height: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 4px 16px;
+    }
+
+    #ring-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: min(72vw, 56vh, 380px);
+      height: min(72vw, 56vh, 380px);
+    }
+
+    #progress-ring {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      transform: rotate(-90deg);
+      overflow: visible;
+    }
+
+    .ring-track {
+      fill: none;
+      stroke: var(--surface2);
+      stroke-width: 6;
+    }
+
+    .ring-fill {
+      fill: none;
+      stroke: var(--phase-color);
+      stroke-width: 6;
+      stroke-linecap: round;
+      stroke-dasharray: 540.35;
+      stroke-dashoffset: 540.35;
+      transition: stroke-dashoffset 0.25s linear, stroke 0.3s ease;
+      filter: drop-shadow(0 0 8px var(--phase-color));
     }
 
     .display-inner {
+      position: relative;
+      z-index: 1;
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 10px;
+      gap: 4px;
     }
 
     #phase-label {
-      font-size: clamp(0.85rem, 3.5vw, 1.1rem);
-      font-weight: 900;
-      letter-spacing: 0.3em;
+      font-family: 'Bebas Neue', 'Segoe UI', sans-serif;
+      font-size: clamp(1rem, 5vw, 1.4rem);
+      font-weight: 400;
+      letter-spacing: 0.35em;
       text-transform: uppercase;
       color: var(--phase-color);
       transition: color 0.3s ease;
-      min-height: 1.4em;
-      text-shadow: 0 0 20px var(--phase-color);
+      min-height: 1.3em;
+      text-shadow: 0 0 24px var(--phase-color);
     }
 
     #time-display {
-      font-size: clamp(4.5rem, 22vw, 9rem);
-      font-weight: 900;
+      font-family: 'Bebas Neue', 'Segoe UI', sans-serif;
+      font-size: clamp(4.5rem, 20vw, 8.5rem);
+      font-weight: 400;
       font-variant-numeric: tabular-nums;
-      letter-spacing: -0.03em;
+      letter-spacing: 0.04em;
       color: var(--phase-color);
       line-height: 1;
       transition: color 0.3s ease;
       text-shadow:
-        0 0 60px var(--phase-color),
-        0 0 120px color-mix(in srgb, var(--phase-color) 30%, transparent);
+        0 0 50px var(--phase-color),
+        0 0 100px color-mix(in srgb, var(--phase-color) 25%, transparent);
     }
-    #time-display.pulse {
-      animation: pulse 0.15s ease-out;
-    }
+
+    #time-display.pulse { animation: pulse 0.18s ease-out; }
     @keyframes pulse {
       0%   { transform: scale(1); }
-      50%  { transform: scale(1.08); }
+      50%  { transform: scale(1.1); }
       100% { transform: scale(1); }
     }
     #time-display.finished-flash {
@@ -238,29 +281,26 @@
     }
 
     #round-display {
-      font-size: clamp(0.85rem, 3vw, 1.1rem);
-      font-weight: 700;
-      letter-spacing: 0.1em;
+      font-family: 'Bebas Neue', 'Segoe UI', sans-serif;
+      font-size: clamp(1rem, 4vw, 1.3rem);
+      font-weight: 400;
+      letter-spacing: 0.18em;
       text-transform: uppercase;
       color: var(--text-secondary);
-      min-height: 1.4em;
+      min-height: 1.3em;
     }
 
-    /* ── PROGRESS BAR ── */
-    #progress-bar-wrap {
-      height: 4px;
-      background: var(--border);
-      flex-shrink: 0;
+    /* ── SCREEN FLASH ── */
+    @keyframes screenFlash {
+      0%   { opacity: 0.45; }
+      100% { opacity: 0; }
     }
-    #progress-bar {
-      height: 100%;
-      background: linear-gradient(90deg,
-        color-mix(in srgb, var(--phase-color) 50%, transparent),
-        var(--phase-color)
-      );
-      width: 0%;
-      transition: background 0.3s ease;
-      box-shadow: 0 0 10px var(--phase-color);
+    #screen-flash {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 9999;
+      opacity: 0;
     }
 
     /* ── CONTROLS ── */
@@ -375,11 +415,19 @@
 
 <section id="config-panel"></section>
 
+<div id="screen-flash"></div>
+
 <main id="timer-display">
-  <div class="display-inner">
-    <div id="phase-label"></div>
-    <div id="time-display">00:00</div>
-    <div id="round-display"></div>
+  <div id="ring-wrapper">
+    <svg id="progress-ring" viewBox="0 0 200 200" aria-hidden="true">
+      <circle class="ring-track" cx="100" cy="100" r="86"/>
+      <circle class="ring-fill" id="ring-fill" cx="100" cy="100" r="86"/>
+    </svg>
+    <div class="display-inner">
+      <div id="phase-label"></div>
+      <div id="time-display">00:00</div>
+      <div id="round-display"></div>
+    </div>
   </div>
 </main>
 
@@ -505,9 +553,25 @@
   const roundEl         = document.getElementById('round-display');
   const btnReset        = document.getElementById('btn-reset');
   const btnStartPause   = document.getElementById('btn-start-pause');
-  const progressBar     = document.getElementById('progress-bar');
   const btnRepMinusCtrl = document.getElementById('btn-rep-minus-ctrl');
   const btnRepPlusCtrl  = document.getElementById('btn-rep-plus-ctrl');
+  const ringFillEl      = document.getElementById('ring-fill');
+  const screenFlashEl   = document.getElementById('screen-flash');
+
+  const RING_CIRCUMFERENCE = 2 * Math.PI * 86; // ≈ 540.35
+
+  function updateRing(pct) {
+    const offset = RING_CIRCUMFERENCE * (1 - Math.min(Math.max(pct, 0), 100) / 100);
+    ringFillEl.style.strokeDashoffset = offset;
+  }
+
+  function flashScreen(color) {
+    screenFlashEl.style.background = color;
+    screenFlashEl.animate(
+      [{ opacity: 0.45 }, { opacity: 0 }],
+      { duration: 400, easing: 'ease-out' }
+    );
+  }
 
   /* ─── AUDIO ──────────────────────────────────────────── */
   function ensureAudio() {
@@ -684,7 +748,7 @@
     }
     roundEl.textContent = roundStr;
 
-    // Progress bar
+    // Ring progress
     let pct = 0;
     if (status === 'running' || status === 'paused') {
       if (mode === 'progressive' && config.targetTime > 0) {
@@ -702,7 +766,7 @@
     } else if (status === 'finished') {
       pct = 100;
     }
-    progressBar.style.width = pct + '%';
+    updateRing(pct);
 
   }
 
@@ -829,6 +893,7 @@
     if (state.phase === 'work') {
       state.phase = 'rest';
       beepShort();
+      flashScreen(COLOR.rest);
     } else {
       state.currentRound++;
       if (state.currentRound > state.totalRounds) {
@@ -837,6 +902,7 @@
       }
       state.phase = 'work';
       beepShort();
+      flashScreen(COLOR.work);
     }
     state.phaseOrigin = (Date.now() - state.tickOrigin + state.tickAccumulated) - overflow;
     state.phaseElapsed = overflow;
