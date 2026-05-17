@@ -694,15 +694,17 @@
     progressive: '#40c4ff',
     countdown:   '#b388ff',
     amrap:       '#ffd740',
-    emom:        '#69ff47',
+    emom:        '#00e676',
     reps:        '#e040fb',
-    tabata:      null,
+    tabata:      '#ff6d00',
   };
 
   /* ─── DISPLAY UPDATE ─────────────────────────────────── */
   function phaseColor() {
     if (state.status === 'finished') return COLOR.finish;
-    if (state.mode === 'tabata') return state.phase === 'work' ? COLOR.work : COLOR.rest;
+    if (state.mode === 'tabata' && state.status !== 'idle') {
+      return state.phase === 'work' ? COLOR.work : COLOR.rest;
+    }
     return MODE_COLOR[state.mode] || COLOR.neutral;
   }
 
