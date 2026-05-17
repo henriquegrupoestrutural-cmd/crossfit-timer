@@ -12,31 +12,30 @@
   <link rel="apple-touch-icon" href="icons/icon-192.png" />
   <style>
     :root {
-      --bg: #0a0a0a;
-      --surface: #141414;
-      --surface2: #1e1e1e;
-      --border: #2a2a2a;
-      --text-primary: #f0f0f0;
-      --text-secondary: #666;
-      --text-muted: #444;
+      --bg: #060608;
+      --surface: #0f0f14;
+      --surface2: #16161e;
+      --border: #222230;
+      --text-primary: #eeeef5;
+      --text-secondary: #55556a;
+      --text-muted: #33333f;
 
       --color-work:    #00e676;
       --color-rest:    #ff6d00;
-      --color-neutral: #29b6f6;
-      --color-finish:  #f44336;
-      --color-reps:    #ce93d8;
+      --color-neutral: #40c4ff;
+      --color-finish:  #ff1744;
+      --color-reps:    #e040fb;
 
       --phase-color: var(--color-neutral);
 
-      --radius: 12px;
-      --radius-sm: 8px;
+      --radius: 18px;
+      --radius-sm: 12px;
     }
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     html, body {
       height: 100%;
-      background: var(--bg);
       color: var(--text-primary);
       font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
       overflow: hidden;
@@ -46,48 +45,61 @@
       display: flex;
       flex-direction: column;
       height: 100dvh;
+      background:
+        radial-gradient(ellipse 100% 50% at 50% -5%, color-mix(in srgb, var(--phase-color) 10%, transparent) 0%, transparent 70%),
+        var(--bg);
+      transition: background 0.6s ease;
     }
 
     /* ── MODE NAV ── */
     #mode-nav {
       display: flex;
-      gap: 6px;
-      padding: 12px 12px 8px;
+      gap: 8px;
+      padding: 14px 14px 10px;
       overflow-x: auto;
       scrollbar-width: none;
       flex-shrink: 0;
-      background: var(--bg);
     }
     #mode-nav::-webkit-scrollbar { display: none; }
 
     .mode-btn {
       flex-shrink: 0;
-      padding: 8px 16px;
+      padding: 8px 18px;
       border-radius: 99px;
-      border: 1.5px solid var(--border);
+      border: 1.5px solid transparent;
       background: var(--surface);
       color: var(--text-secondary);
-      font-size: 0.78rem;
-      font-weight: 600;
-      letter-spacing: 0.04em;
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
       text-transform: uppercase;
       cursor: pointer;
-      transition: all 0.18s ease;
+      transition: all 0.2s ease;
       white-space: nowrap;
       touch-action: manipulation;
     }
-    .mode-btn:hover { border-color: var(--phase-color); color: var(--text-primary); }
+
+    .mode-btn[data-mode="progressive"] { --m: #40c4ff; }
+    .mode-btn[data-mode="countdown"]   { --m: #b388ff; }
+    .mode-btn[data-mode="amrap"]       { --m: #ffd740; }
+    .mode-btn[data-mode="emom"]        { --m: #00e676; }
+    .mode-btn[data-mode="reps"]        { --m: #e040fb; }
+    .mode-btn[data-mode="tabata"]      { --m: #ff6d00; }
+
+    .mode-btn { border-color: color-mix(in srgb, var(--m, #555) 20%, var(--border)); }
+    .mode-btn:hover { border-color: var(--m, var(--phase-color)); color: var(--text-primary); }
     .mode-btn.active {
-      background: var(--phase-color);
-      border-color: var(--phase-color);
+      background: var(--m, var(--phase-color));
+      border-color: var(--m, var(--phase-color));
       color: #000;
+      box-shadow: 0 0 18px color-mix(in srgb, var(--m, var(--phase-color)) 45%, transparent);
     }
 
     /* ── CONFIG PANEL ── */
     #config-panel {
-      padding: 8px 12px 10px;
+      padding: 8px 14px 12px;
       flex-shrink: 0;
-      min-height: 64px;
+      min-height: 68px;
       display: flex;
       align-items: center;
     }
@@ -102,16 +114,16 @@
     .config-field {
       display: flex;
       flex-direction: column;
-      gap: 4px;
+      gap: 5px;
       flex: 1 1 90px;
       min-width: 80px;
       max-width: 180px;
     }
 
     .config-field label {
-      font-size: 0.68rem;
-      font-weight: 700;
-      letter-spacing: 0.08em;
+      font-size: 0.65rem;
+      font-weight: 800;
+      letter-spacing: 0.1em;
       text-transform: uppercase;
       color: var(--text-secondary);
     }
@@ -122,23 +134,24 @@
       border: 1.5px solid var(--border);
       border-radius: var(--radius-sm);
       color: var(--text-primary);
-      font-size: 1.1rem;
-      font-weight: 700;
-      padding: 8px 10px;
+      font-size: 1.15rem;
+      font-weight: 800;
+      padding: 9px 10px;
       width: 100%;
       text-align: center;
       outline: none;
-      transition: border-color 0.15s;
+      transition: border-color 0.15s, box-shadow 0.15s;
       -webkit-appearance: none;
       appearance: none;
     }
     .config-field input[type="number"]:focus,
     .time-input-wrap input[type="number"]:focus {
       border-color: var(--phase-color);
+      box-shadow: 0 0 0 3px color-mix(in srgb, var(--phase-color) 15%, transparent);
     }
     .config-field input:disabled,
     .time-input-wrap input:disabled {
-      opacity: 0.4;
+      opacity: 0.35;
       cursor: not-allowed;
     }
 
@@ -150,7 +163,7 @@
     .time-input-wrap input { flex: 1; }
     .time-sep {
       font-size: 1.4rem;
-      font-weight: 700;
+      font-weight: 800;
       color: var(--text-secondary);
       line-height: 1;
       margin-bottom: 2px;
@@ -182,27 +195,31 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 8px;
+      gap: 10px;
     }
 
     #phase-label {
-      font-size: clamp(0.9rem, 4vw, 1.3rem);
+      font-size: clamp(0.85rem, 3.5vw, 1.1rem);
       font-weight: 900;
-      letter-spacing: 0.2em;
+      letter-spacing: 0.3em;
       text-transform: uppercase;
       color: var(--phase-color);
       transition: color 0.3s ease;
       min-height: 1.4em;
+      text-shadow: 0 0 20px var(--phase-color);
     }
 
     #time-display {
       font-size: clamp(4.5rem, 22vw, 9rem);
       font-weight: 900;
       font-variant-numeric: tabular-nums;
-      letter-spacing: -0.02em;
+      letter-spacing: -0.03em;
       color: var(--phase-color);
       line-height: 1;
       transition: color 0.3s ease;
+      text-shadow:
+        0 0 60px var(--phase-color),
+        0 0 120px color-mix(in srgb, var(--phase-color) 30%, transparent);
     }
     #time-display.pulse {
       animation: pulse 0.15s ease-out;
@@ -213,27 +230,44 @@
       100% { transform: scale(1); }
     }
     #time-display.finished-flash {
-      animation: finishedFlash 0.6s ease infinite alternate;
+      animation: finishedFlash 0.5s ease infinite alternate;
     }
     @keyframes finishedFlash {
       from { opacity: 1; }
-      to   { opacity: 0.3; }
+      to   { opacity: 0.2; }
     }
 
     #round-display {
-      font-size: clamp(0.9rem, 3.5vw, 1.2rem);
+      font-size: clamp(0.85rem, 3vw, 1.1rem);
       font-weight: 700;
-      letter-spacing: 0.06em;
+      letter-spacing: 0.1em;
       text-transform: uppercase;
       color: var(--text-secondary);
       min-height: 1.4em;
     }
 
+    /* ── PROGRESS BAR ── */
+    #progress-bar-wrap {
+      height: 4px;
+      background: var(--border);
+      flex-shrink: 0;
+    }
+    #progress-bar {
+      height: 100%;
+      background: linear-gradient(90deg,
+        color-mix(in srgb, var(--phase-color) 50%, transparent),
+        var(--phase-color)
+      );
+      width: 0%;
+      transition: background 0.3s ease;
+      box-shadow: 0 0 10px var(--phase-color);
+    }
+
     /* ── CONTROLS ── */
     #controls {
       display: flex;
-      gap: 12px;
-      padding: 12px 16px 16px;
+      gap: 10px;
+      padding: 10px 14px 20px;
       flex-shrink: 0;
     }
 
@@ -244,54 +278,49 @@
       border: 1.5px solid var(--border);
       background: var(--surface2);
       color: var(--text-secondary);
-      font-size: 0.85rem;
-      font-weight: 700;
-      letter-spacing: 0.08em;
+      font-size: 0.82rem;
+      font-weight: 800;
+      letter-spacing: 0.1em;
       text-transform: uppercase;
       cursor: pointer;
       transition: all 0.15s;
       touch-action: manipulation;
     }
-    #btn-reset:hover:not(:disabled) { border-color: var(--text-secondary); color: var(--text-primary); }
-    #btn-reset:disabled { opacity: 0.3; cursor: not-allowed; }
+    #btn-reset:hover:not(:disabled) {
+      border-color: var(--text-secondary);
+      color: var(--text-primary);
+      background: var(--surface);
+    }
+    #btn-reset:disabled { opacity: 0.25; cursor: not-allowed; }
 
     #btn-start-pause {
       flex: 2.5;
       padding: 16px;
       border-radius: var(--radius);
       border: none;
-      background: var(--phase-color);
+      background: linear-gradient(135deg,
+        color-mix(in srgb, var(--phase-color) 75%, #fff 25%),
+        var(--phase-color)
+      );
       color: #000;
       font-size: 1rem;
       font-weight: 900;
-      letter-spacing: 0.1em;
+      letter-spacing: 0.12em;
       text-transform: uppercase;
       cursor: pointer;
-      transition: background 0.3s ease, transform 0.12s;
+      transition: background 0.3s ease, transform 0.12s, box-shadow 0.3s ease;
       touch-action: manipulation;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       gap: 2px;
+      box-shadow: 0 4px 28px color-mix(in srgb, var(--phase-color) 40%, transparent);
     }
     #btn-start-pause:hover { filter: brightness(1.1); }
-    #btn-start-pause:active { transform: scale(0.97); }
+    #btn-start-pause:active { transform: scale(0.96); }
     #btn-start-pause .sp-main { font-size: 1.5rem; font-weight: 900; line-height: 1; }
-    #btn-start-pause .sp-sub  { font-size: 0.6rem; letter-spacing: 0.12em; opacity: 0.7; }
-
-    /* ── PROGRESS BAR ── */
-    #progress-bar-wrap {
-      height: 3px;
-      background: var(--border);
-      flex-shrink: 0;
-    }
-    #progress-bar {
-      height: 100%;
-      background: var(--phase-color);
-      width: 0%;
-      transition: background 0.3s ease;
-    }
+    #btn-start-pause .sp-sub  { font-size: 0.6rem; letter-spacing: 0.14em; opacity: 0.7; }
 
     /* ── REP MODE BUTTONS ── */
     #btn-rep-minus-ctrl,
@@ -313,11 +342,18 @@
     #btn-rep-plus-ctrl[hidden] { display: none; }
     #btn-rep-minus-ctrl:hover  { border-color: var(--color-rest); color: var(--color-rest); }
     #btn-rep-minus-ctrl:active { transform: scale(0.95); }
-    #btn-rep-plus-ctrl  { flex: 2; background: var(--phase-color); border-color: var(--phase-color); color: #000; font-weight: 700; transition: background 0.3s ease, border-color 0.3s ease, transform 0.12s; }
+    #btn-rep-plus-ctrl {
+      flex: 2;
+      background: linear-gradient(135deg, color-mix(in srgb, var(--phase-color) 75%, #fff 25%), var(--phase-color));
+      border-color: var(--phase-color);
+      color: #000;
+      font-weight: 700;
+      box-shadow: 0 4px 20px color-mix(in srgb, var(--phase-color) 35%, transparent);
+      transition: background 0.3s ease, border-color 0.3s ease, transform 0.12s;
+    }
     #btn-rep-plus-ctrl:hover   { filter: brightness(1.1); }
     #btn-rep-plus-ctrl:active  { transform: scale(0.95); }
 
-    /* ── SCROLLBAR numbers ── */
     input[type=number]::-webkit-inner-spin-button,
     input[type=number]::-webkit-outer-spin-button {
       -webkit-appearance: none;
@@ -333,7 +369,6 @@
   <button class="mode-btn" data-mode="emom">EMOM</button>
   <button class="mode-btn" data-mode="reps">Reps</button>
   <button class="mode-btn" data-mode="tabata">Tabata</button>
-  <button class="mode-btn" data-mode="interval">Interval</button>
 </nav>
 
 <div id="progress-bar-wrap"><div id="progress-bar"></div></div>
@@ -504,8 +539,10 @@
     setTimeout(beepShort, 200);
     setTimeout(beepShort, 400);
     setTimeout(() => playTone(880, 0.35, 0.5), 650);
-    setTimeout(() => playTone(660, 0.35, 0.5), 1100);
-    setTimeout(() => playTone(523, 1.8, 0.5), 1550);
+    setTimeout(() => playTone(660, 0.35, 0.5), 1200);
+    setTimeout(() => playTone(523, 0.35, 0.5), 1750);
+    setTimeout(() => playTone(440, 0.35, 0.5), 2300);
+    setTimeout(() => playTone(349, 2.4, 0.4), 2900);
   }
 
   /* ─── TIME FORMAT ────────────────────────────────────── */
