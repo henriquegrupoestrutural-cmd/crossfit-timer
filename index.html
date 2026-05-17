@@ -959,10 +959,6 @@
     }
   });
 
-  // Prevent double-tap zoom on controls
-  document.getElementById('controls').addEventListener('touchend', e => {
-    e.preventDefault();
-  }, { passive: false });
 
   /* ─── INIT ───────────────────────────────────────────── */
   switchMode('progressive');
