@@ -1,4 +1,4 @@
-const CACHE = 'crossfit-timer-v1';
+const CACHE = 'crossfit-timer-v2';
 const ASSETS = [
   './',
   './index.html',
