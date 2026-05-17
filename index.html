@@ -209,7 +209,10 @@
       position: absolute;
       inset: -20%;
       background: url('Cronometro.jpeg') center top / cover no-repeat;
-      opacity: 0.18;
+      opacity: 0.55;
+      mix-blend-mode: screen;
+      mask-image: radial-gradient(ellipse 75% 85% at center, black 35%, transparent 75%);
+      -webkit-mask-image: radial-gradient(ellipse 75% 85% at center, black 35%, transparent 75%);
       pointer-events: none;
     }
 
