@@ -690,14 +690,20 @@
     configPanel.querySelectorAll('input').forEach(el => el.disabled = locked);
   }
 
+  const MODE_COLOR = {
+    progressive: '#40c4ff',
+    countdown:   '#b388ff',
+    amrap:       '#ffd740',
+    emom:        '#69ff47',
+    reps:        '#e040fb',
+    tabata:      null,
+  };
+
   /* ─── DISPLAY UPDATE ─────────────────────────────────── */
   function phaseColor() {
-    if (state.mode === 'reps') return COLOR.reps;
     if (state.status === 'finished') return COLOR.finish;
-    const m = state.mode;
-    if (m === 'progressive' || m === 'countdown' || m === 'amrap') return COLOR.neutral;
-    if (m === 'emom') return COLOR.work;
-    return state.phase === 'work' ? COLOR.work : COLOR.rest;
+    if (state.mode === 'tabata') return state.phase === 'work' ? COLOR.work : COLOR.rest;
+    return MODE_COLOR[state.mode] || COLOR.neutral;
   }
 
   function updateDisplay() {
