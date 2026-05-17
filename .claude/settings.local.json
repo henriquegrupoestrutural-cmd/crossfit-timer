@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "PowerShell(Start-Process \"C:\\\\Users\\\\henrique.moraes\\\\Desktop\\\\APP CLAUDE\\\\index.html\")",
+      "PowerShell($env:PATH += \";C:\\\\Program Files\\\\GitHub CLI\"; gh auth login --web --git-protocol https)"
+    ]
+  }
+}
